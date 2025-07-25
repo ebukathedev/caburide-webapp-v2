@@ -19,7 +19,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { ICountry } from "@/types";
+import { ICountry } from "@/shared/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Building2, Eye, EyeOff, Globe, Lock, Mail, User } from "lucide-react";
@@ -31,6 +31,9 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { toast } from "sonner";
+import { publicApi } from "@/shared/services/api/public.api";
+import { useMutation } from "@tanstack/react-query";
+import { authApi } from "@/shared/services/api/auth.api";
 
 // Validation schemas
 const adminSchema = z
@@ -99,22 +102,8 @@ const SignupPage: React.FC = () => {
 
 	useEffect(() => {
 		const fetchCountries = async () => {
-			try {
-				const response = await fetch(
-					"https://staging-api.caburide.com/v1/public/countries"
-				);
-				if (!response.ok) throw new Error("Failed to fetch countries");
-				const { data } = await response.json();
-
-				// deduplicate the array to avoid duplicate keys error
-				const uniqueCountries = data.filter(
-					(country: ICountry, index: number, self: ICountry[]) =>
-						index === self.findIndex((c) => c.iso === country.iso)
-				);
-				setCountries(uniqueCountries);
-			} catch (error) {
-				setCountries([]);
-			}
+			const countries = await publicApi.fetchCountries();
+			setCountries(countries);
 		};
 		fetchCountries();
 	}, []);
@@ -171,6 +160,23 @@ const SignupPage: React.FC = () => {
 		setCurrentStep((prev) => prev - 1);
 	};
 
+	const registerMutation = useMutation({
+		mutationFn: authApi.register,
+		onSuccess: (data, variables) => {
+			// variables is the payload you sent to mutate()
+			const email = variables.admin.email;
+			router.push(
+				`/auth/verify-email?email=${encodeURIComponent(email)}`
+			);
+		},
+		onError: (error) => {
+			toast.error("Registration failed!");
+		},
+		onSettled: () => {
+			setIsSubmitting(false);
+		},
+	});
+
 	const onSubmit = async (data: FormData) => {
 		const isValid = await validateCurrentStep(3);
 		if (!isValid) return;
@@ -182,11 +188,8 @@ const SignupPage: React.FC = () => {
 			...data,
 			admin: adminDetails,
 		};
-		toast("Thank you");
+		registerMutation.mutate(payload);
 		console.log("Form data before mutation:", payload);
-		// router.push(
-		// 	`/auth/verify-email?email=${encodeURIComponent(data.admin.email)}`
-		// );
 	};
 
 	const getPasswordRequirements = (password: string) => {

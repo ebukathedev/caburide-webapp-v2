@@ -3,7 +3,9 @@ import { NextResponse, NextRequest } from "next/server";
 const publicRoutes = [
 	"/auth/login",
 	"/auth/signup",
-	"/auth/reset-password",
+	"/auth/forgot-password/",
+	"/auth/forgot-password/verify-email",
+	"/auth/forgot-password/reset",
 ] as const;
 const protectedRoutes = [
 	"/dashboard",
