@@ -50,6 +50,7 @@ export default function VerifyEmail() {
 			...form.getValues(),
 			otp: token,
 		});
+		router.push("/auth/forgot-password/reset");
 	};
 
 	const formatTime = (seconds: number) => {
