@@ -4,12 +4,12 @@ import { Form } from "@/components/ui/form";
 import Button from "@/components/ui/icon-button";
 import Loader from "@/components/ui/loader";
 import { AnimatePresence, motion } from "motion/react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function VerifyEmail() {
-	const router = useRouter();
+	// const router = useRouter();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [token, setOtp] = useState("");
 	const [isButtonDisabled, setIsButtonDisabled] = useState(true);

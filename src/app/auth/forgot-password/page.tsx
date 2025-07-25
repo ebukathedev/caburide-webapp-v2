@@ -1,6 +1,4 @@
 "use client";
-import GoogleLogo from "@/assets/icons/google-logo.png";
-import SocialSignInButton from "@/components/auth/SocialSignInButton";
 import {
 	Form,
 	FormControl,
@@ -12,9 +10,8 @@ import Button from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import Loader from "@/components/ui/loader";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
